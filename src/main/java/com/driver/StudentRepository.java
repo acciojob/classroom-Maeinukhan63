@@ -1,58 +1,98 @@
 package com.driver;
 
-import java.util.*;
-
 import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 public class StudentRepository {
 
-    private HashMap<String, Student> studentMap;
-    private HashMap<String, Teacher> teacherMap;
-    private HashMap<String, List<String>> teacherStudentMapping;
+    HashMap<String,Student> studentDb = new HashMap<>();
 
-    public StudentRepository(){
-        this.studentMap = new HashMap<String, Student>();
-        this.teacherMap = new HashMap<String, Teacher>();
-        this.teacherStudentMapping = new HashMap<String, List<String>>();
+    HashMap<String,Teacher> teacherDb = new HashMap<>();
+
+    HashMap<String,List<String>> teacherStudent = new HashMap<>();
+
+
+    public void addStudent(Student student){
+
+        String key = student.getName();
+        studentDb.put(key,student);
+        return ;
     }
 
-    public void saveStudent(Student student){
-        // your code goes here
+    public void addTeacher(Teacher teacher){
+
+        String key = teacher.getName();
+        teacherDb.put(key,teacher);
+        return ;
     }
 
-    public void saveTeacher(Teacher teacher){
-        // your code goes here
+    public void addStudentTeacherPair(String student,String teacher){
+
+        List<String> students = teacherStudent.get(teacher);
+
+        if(students==null){
+            students = new ArrayList<>();
+        }
+
+        students.add(student);
+
+        teacherStudent.put(teacher,students);
+
+
+        return ;
     }
 
-    public void saveStudentTeacherPair(String student, String teacher){
-        if(studentMap.containsKey(student) && teacherMap.containsKey(teacher)){
-            // your code goes here
+    public void removeTeacher(String teacher){
+
+        for(String str : teacherStudent.get(teacher)){
+
+            studentDb.remove(str);
+
+        }
+        teacherStudent.remove(teacher);
+        teacherDb.remove(teacher);
+    }
+
+    public void removeAllTeacher(){
+
+
+        for(String teacher : teacherDb.keySet())
+        {
+            for(String str : teacherStudent.get(teacher)){
+
+                studentDb.remove(str);
+
+            }
+            teacherStudent.remove(teacher);
+            teacherDb.remove(teacher);
+
         }
     }
 
-    public Student findStudent(String student){
-        // your code goes here
+    public Student getStudentByName(String name){
+        return studentDb.get(name);
     }
 
-    public Teacher findTeacher(String teacher){
-        // your code goes here
+    public Teacher getTeacherByName(String name){
+        return teacherDb.get(name);
     }
 
-    public List<String> findStudentsFromTeacher(String teacher){
-        // your code goes here
-        // find student list corresponding to a teacher
+    public List<String> getStudentsByTeacherName(String teacher){
+        return teacherStudent.get(teacher);
     }
 
-    public List<String> findAllStudents(){
-        // your code goes here
-    }
+    public List<String> getAllStudents(){
 
-    public void deleteTeacher(String teacher){
-        // your code goes here
-    }
+        List<String> students = new ArrayList<>();
 
-    public void deleteAllTeachers(){
-        // your code goes here
+        for(String s : studentDb.keySet()){
+            students.add(s);
+        }
+        return students;
     }
 }
